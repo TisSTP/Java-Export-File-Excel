@@ -1,7 +1,7 @@
 <component name="libraryTable">
   <library name="poi-ooxml-schemas-3.17">
     <CLASSES>
-      <root url="jar://$PROJECT_DIR$/../../../app/java/libraries/apache/poi-ooxml-schemas/poi-ooxml-schemas-3.17.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../poi-ooxml-schemas-3.17.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />
