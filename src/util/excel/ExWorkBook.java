@@ -136,7 +136,7 @@ public class ExWorkBook {
     return borderList.get(styleBorder);
   }
   public CellStyle getDefaultStyle(StyleCell styleCell) {
-    return borderList.get(styleCell);
+    return styleList.get(styleCell);
   }
 
   private void setDefaultStyle() {

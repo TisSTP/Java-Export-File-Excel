@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Font;
 import util.excel.ExCell;
 import util.excel.ExRow;
 import util.excel.ExSheet;
@@ -17,11 +19,23 @@ import util.excel.ExWorkBook.StyleDataFormat;
 
 public class Excel {
   private static final SimpleDateFormat sdfTh = new SimpleDateFormat("dd/MM/yyyy", new Locale("th", "TH"));
+
   public static void main(String[] args) {
 
     long startTime = System.nanoTime();
 
     ExWorkBook exWorkbook = new ExWorkBook();
+
+//    Font fontBold = exWorkbook.getWorkbook().createFont();
+//    CellStyle cs = exWorkbook.getWorkbook().createCellStyle();
+//    cs.setFont(fontBold);
+//    cs.setWrapText(true);
+//    cs.setAlignment(CellStyle.ALIGN_CENTER);
+//    cs.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
+//    cs.setBorderLeft(CellStyle.BORDER_THIN);
+//    cs.setBorderTop(CellStyle.BORDER_THIN);
+//    cs.setBorderRight(CellStyle.BORDER_THIN);
+//    cs.setBorderBottom(CellStyle.BORDER_THIN);
 
     // -------------------------- sheet 1 --------------------------
     ExSheet sheet = exWorkbook.createSheet("sheet1");
@@ -92,7 +106,7 @@ public class Excel {
     // end row header content ----------------------------
 
     // row content -----------------------------------------
-    for (int i = 0; i < 5; i++) { // error 1818 : row 1825
+    for (int i = 0; i < 10_000; i++) { // error 1818 : row 1825
       row = sheet.createRow(rowindex++);
       row.createCell().setStyle(StyleCell.CONTENTLEFT).setValue("1111111111111111");
       row.createCell().setStyle(StyleCell.CONTENTRIGHT).setValue("2222222222222");
