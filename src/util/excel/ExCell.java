@@ -1,176 +1,68 @@
 package util.excel;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.DataFormat;
-import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import util.Utility;
+import util.excel.ExWorkBook.StyleBorder;
+import util.excel.ExWorkBook.StyleCell;
+import util.excel.ExWorkBook.StyleDataFormat;
 
 public class ExCell {
-  private Workbook workbook;
-  private Sheet sheet;
+  private ExWorkBook exWorkBook;
+  private ExSheet exSheet;
   private Row row;
   private Cell cell;
   private CellStyle style;
-  private Font font;
-  private DataFormat df;
-  private CreationHelper createHelper;
-  private short borderWeight;
 
-  // config
-  private final SimpleDateFormat SDF_TH = new SimpleDateFormat("dd/MM/yyyy", new Locale("th", "TH"));
-  private final String FORMAT_DATE_STR = "dd/mm/yyyy";
-  private final String DEFAULT_DATE_STR = "xx/xx/xxxx";
-  private final String DEFAULT_CURRENCY_STR = "#,##0.00";
-
-  public ExCell(Workbook workbook, Sheet sheet, Row row, int index) {
-    this.workbook = workbook;
-    this.sheet = sheet;
+  public ExCell(ExWorkBook exWorkBook, ExSheet exSheet, Row row, int index) {
+    this.exWorkBook = exWorkBook;
+    this.exSheet = exSheet;
     this.row = row;
     this.cell = this.row.createCell(index);
-    this.font = this.workbook.createFont();
-    this.df = this.workbook.createDataFormat();
-    this.style = this.workbook.createCellStyle();
-    this.createHelper = this.workbook.getCreationHelper();
-    this.borderWeight = CellStyle.BORDER_THIN;
-    this.setStyleHorizontalCenter();
-    this.setStyleVerticalCenter();
-    this.setStyleWrapText();
+  }
+
+  public Cell getCell() {
+    return cell;
   }
 
   // ------------------------ STYLE ----------------------------
   public CellStyle getStyle() {
     return style;
   }
-  public void setStyle(CellStyle style) {
+  public ExCell setStyle(CellStyle style) {
     this.style = style;
-  }
-  // Alignment
-  public ExCell setStyleHorizontalLeft() {
-    this.style.setAlignment(CellStyle.ALIGN_LEFT);
     return this;
   }
-  public ExCell setStyleHorizontalCenter() {
-    this.style.setAlignment(CellStyle.ALIGN_CENTER);
+  public ExCell setStyle(StyleCell style) {
+    this.style = this.exWorkBook.getDefaultStyle(style);
     return this;
   }
-  public ExCell setStyleHorizontalRight() {
-    this.style.setAlignment(CellStyle.ALIGN_RIGHT);
+  public ExCell setStyle(StyleDataFormat style) {
+    this.style = this.exWorkBook.getDefaultStyle(style);
     return this;
   }
-  public ExCell setStyleHorizontalJustify() {
-    this.style.setAlignment(CellStyle.ALIGN_JUSTIFY);
+  public ExCell setStyle(StyleBorder style) {
+    this.style = this.exWorkBook.getDefaultStyle(style);
     return this;
   }
-
-  // Vertical Alignment
-  public ExCell setStyleVerticalTop() {
-    this.style.setVerticalAlignment(CellStyle.VERTICAL_TOP);
-    return this;
-  }
-  public ExCell setStyleVerticalCenter() {
-    this.style.setVerticalAlignment(CellStyle.VERTICAL_CENTER);
-    return this;
-  }
-  public ExCell setStyleVerticalBottom() {
-    this.style.setVerticalAlignment(CellStyle.VERTICAL_BOTTOM);
-    return this;
-  }
-  public ExCell setStyleVerticalJustify() {
-    this.style.setVerticalAlignment(CellStyle.VERTICAL_JUSTIFY);
-    return this;
-  }
-
-  // Wrap Text
-  public ExCell setStyleWrapText() {
-    this.style.setWrapText(true);
-    return this;
-  }
-
-  // Font
-  public ExCell setFontBold() {
-    this.font.setBold(true);
-    return this;
-  }
-  public ExCell setFontUnderlineSingleA() {
-    this.font.setUnderline(Font.U_SINGLE_ACCOUNTING);
-    return this;
-  }
-
-  /**
-   *
-   * @param fontUnderline Font
-   * @return
-   */
-  public ExCell setFontUnderline(byte fontUnderline) {
-    this.font.setUnderline(fontUnderline);
-    return this;
-  }
-
-  // Format Data
-  public void setStyleDfCurrency() {
-    this.style.setDataFormat(df.getFormat(DEFAULT_CURRENCY_STR));
-  }
-  public void setStyleDfDate() {
-    this.style.setDataFormat(createHelper.createDataFormat().getFormat(FORMAT_DATE_STR));
-  }
-
-  // Border
-  public short getBorderWeight() {
-    return borderWeight;
-  }
-  public ExCell setBorderWeight(short borderWeight) {
-    this.borderWeight = borderWeight;
-    return this;
-  }
-  public ExCell setBorderAll() {
-    this.setBorderLeft();
-    this.setBorderRight();
-    this.setBorderTop();
-    this.setBorderBottom();
-    return this;
-  }
-  public ExCell setBorderTop() {
-    this.style.setBorderTop(borderWeight);
-    return this;
-  }
-  public ExCell setBorderBottom() {
-    this.style.setBorderBottom(borderWeight);
-    return this;
-  }
-  public ExCell setBorderLeft() {
-    this.style.setBorderLeft(borderWeight);
-    return this;
-  }
-  public ExCell setBorderRight() {
-    this.style.setBorderRight(borderWeight);
-    return this;
-  }
-
   // ---------------------- END STYLE --------------------------
 
   // Convert Data
   public String convertDateToThai(Date date) {
     try {
-      return SDF_TH.format(date);
+      return exWorkBook.SDF_TH.format(date);
     } catch (Exception e) {
-      return DEFAULT_DATE_STR;
+      return exWorkBook.DEFAULT_DATE_STR;
     }
   }
 
   // ------------------------ Type --------------------------
-  public ExCell setTypeCurrency() {
+  public void setTypeCurrency() {
     this.cell.setCellType(Cell.CELL_TYPE_NUMERIC);
-    this.setStyleDfCurrency();
-    return this;
+    this.setStyle(this.exWorkBook.getDefaultStyle(StyleDataFormat.CURRENCY));
   }
   public void setTypeNumeric() {
     this.cell.setCellType(Cell.CELL_TYPE_NUMERIC);
@@ -179,15 +71,17 @@ public class ExCell {
     this.cell.setCellType(Cell.CELL_TYPE_STRING);
   }
   public void setTypeDate() {
-    this.setStyleDfDate();
+    this.setStyle(this.exWorkBook.getDefaultStyle(StyleDataFormat.DATETHAI));
   }
   // ---------------------- End Type ------------------------
-
 
   // Set Value
   public void setValue(Object value) {
     this.writeCell(value);
-    this.style.setFont(this.font);
+    if(style == null) {
+      // default
+      this.setStyle(this.exWorkBook.getDefaultStyle(StyleCell.DEFAULT));
+    }
     this.cell.setCellStyle(this.style);
   }
 
@@ -213,7 +107,6 @@ public class ExCell {
       }
     } else if(value instanceof BigDecimal) {
       this.setTypeCurrency();
-      this.setStyleHorizontalRight();
       if (Utility.isValid(value)) {
         cell.setCellValue(((BigDecimal) value).doubleValue());
       } else {

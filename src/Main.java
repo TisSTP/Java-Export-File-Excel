@@ -23,6 +23,20 @@ public class Main {
 
         CreationHelper createHelper = wb.getCreationHelper();
 
+        CellStyle style = wb.createCellStyle();
+        style.setWrapText(true);
+
+        // loop
+      style = wb.createCellStyle();
+      style.setWrapText(true);
+      style = wb.createCellStyle();
+      style.setWrapText(true);
+      style = wb.createCellStyle();
+      style.setWrapText(true);
+      style = wb.createCellStyle();
+      style.setWrapText(true);
+
+
         // create sheets
         Sheet sheet1 = wb.createSheet("sheet1");
 
@@ -33,7 +47,7 @@ public class Main {
         // Create a cell and put a date value in it.  The first cell is not styled
         // as a date.
         Cell cell = row.createCell(0);
-        cell.setCellValue(new Date());
+        cell.setCellValue("HelloHelloHello World");
 //        cell.setCellValue(1);
 
         // Or do it on one line.
@@ -56,6 +70,31 @@ public class Main {
         cell.setCellValue(Calendar.getInstance());
         cell.setCellStyle(cellStyle);
 
+        row = sheet1.createRow(1);
+        cell = row.createCell(0);
+        cell.setCellStyle(style);
+        cell.setCellValue("HelloHelloHello\n World");
+        row.createCell(1).setCellValue(0);
+        row = sheet1.createRow(2);
+        cell = row.createCell(0);
+        cell.setCellStyle(style);
+        cell.setCellValue("HelloHelloHello\r World");
+        row.createCell(1).setCellValue(0);
+        row = sheet1.createRow(3);
+        cell = row.createCell(0);
+        cell.setCellStyle(style);
+        cell.setCellValue("HelloHelloHello\n\r World");
+        row.createCell(1).setCellValue(0);
+        row = sheet1.createRow(4);
+        cell = row.createCell(0);
+        cell.setCellStyle(style);
+        cell.setCellValue("HelloHelloHello\r\n World");
+        row.createCell(1).setCellValue(0);
+
+//        sheet1.autoSizeColumn(0);
+        sheet1.autoSizeColumn(1);
+        sheet1.autoSizeColumn(2);
+        sheet1.autoSizeColumn(3);
 
         // Write the output to a file
         FileOutputStream fileOut = new FileOutputStream("workbook.xlsx");

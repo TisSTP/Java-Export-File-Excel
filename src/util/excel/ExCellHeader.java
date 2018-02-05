@@ -69,12 +69,9 @@ public class ExCellHeader {
         c = merges.get(i);
         if(c[0] == c[1] && c[2] == c[3]) {
           rows[c[0] - rowBegin].createCell(c[2])
-              .setFontBold()
-              .setBorderAll()
               .setValue(names.get(i));
         } else {
           rows[c[0] - rowBegin].createCell(c[2])
-              .setFontBold().setBorderAll()
               .setValue(names.get(i));
           // set merge cell
           this.sheet.setMergeCell(c[0], c[1], c[2], c[3]);

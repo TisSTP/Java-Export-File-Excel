@@ -5,28 +5,24 @@ import java.util.List;
 import java.util.Map;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.RegionUtil;
+import util.excel.ExWorkBook.StyleCell;
 
 public class ExSheet {
-  private Workbook workbook;
+  private ExWorkBook exWorkBook;
   private Sheet sheet;
   private int rowInt;
   private List<Integer[]> mergeLists;
   private List<Integer[]> borderMergeLists;
 
-  public ExSheet(Workbook workbook) {
-    this(workbook, null);
-  }
-
-  public ExSheet(Workbook workbook, String name) {
-    this.workbook = workbook;
+  public ExSheet(ExWorkBook exWorkBook, String name) {
+    this.exWorkBook = exWorkBook;
     this.clearMergeLists();
     this.clearBorderMergeLists();
     this.rowInt = 0;
     if(name != null) {
-      this.sheet = this.workbook.createSheet(name);
+      this.sheet = this.exWorkBook.getWorkbook().createSheet(name);
     }
   }
 
@@ -48,9 +44,8 @@ public class ExSheet {
    * @return ExRow
    */
   public ExRow createRow(int index) {
-    return new ExRow(this.workbook, this.sheet, index);
+    return new ExRow(this.exWorkBook, this, index);
   }
-
   // ------------------------------- merge cell -------------------------------
   /**
    * add merge cell to Lists
@@ -119,10 +114,10 @@ public class ExSheet {
       CellRangeAddress cellRangeAddress;
       for (Integer[] merge : this.borderMergeLists) {
         cellRangeAddress = new CellRangeAddress(merge[0], merge[1], merge[2], merge[3]);
-        RegionUtil.setBorderTop(border, cellRangeAddress, sheet, workbook);
-        RegionUtil.setBorderBottom(border, cellRangeAddress, sheet, workbook);
-        RegionUtil.setBorderLeft(border, cellRangeAddress, sheet, workbook);
-        RegionUtil.setBorderRight(border, cellRangeAddress, sheet, workbook);
+        RegionUtil.setBorderTop(border, cellRangeAddress, sheet, exWorkBook.getWorkbook());
+        RegionUtil.setBorderBottom(border, cellRangeAddress, sheet, exWorkBook.getWorkbook());
+        RegionUtil.setBorderLeft(border, cellRangeAddress, sheet, exWorkBook.getWorkbook());
+        RegionUtil.setBorderRight(border, cellRangeAddress, sheet, exWorkBook.getWorkbook());
       }
     }
   }
@@ -136,8 +131,8 @@ public class ExSheet {
    */
   public void autoSizeColumns(int column[]) {
     if(column != null && column.length > 0) {
-      for (int cell : column) {
-        this.sheet.autoSizeColumn(cell);
+      for (int i = 0; i < column.length; i++) {
+        this.sheet.autoSizeColumn(column[i]);
       }
     }
   }
@@ -192,26 +187,21 @@ public class ExSheet {
    */
   public void createRowBannerReport(int rowId, Object left, Object center, Object right, int lCol, int cCol, int rCol, int lastCol, int heightInPoints) {
     ExRow row = this.createRow(rowId);
+    ExCell cell;
     // left
-    row.createCell(lCol)
-        .setStyleVerticalTop()
-        .setStyleHorizontalLeft()
-        .setFontBold()
-        .setValue(left);
+    cell = row.createCell(lCol);
+    cell.setStyle(StyleCell.BANNERLEFT);
+    cell.setValue(left);
 
     // center
-    row.createCell(cCol)
-        .setStyleVerticalTop()
-        .setStyleHorizontalCenter()
-        .setFontBold()
-        .setValue(center);
+    cell = row.createCell(cCol);
+    cell.setStyle(StyleCell.BANNERCENTER);
+    cell.setValue(center);
 
     // right
-    row.createCell(rCol)
-        .setStyleVerticalTop()
-        .setStyleHorizontalRight()
-        .setFontBold()
-        .setValue(right);
+    cell = row.createCell(rCol);
+    cell.setStyle(StyleCell.BANNERRIGHT);
+    cell.setValue(right);
 
     // increase row height to accomodate two lines of text
     row.setHeightInPoints(heightInPoints);
@@ -220,6 +210,8 @@ public class ExSheet {
     this.setMergeCell(rowId, rowId, lCol, cCol - 1);
     this.setMergeCell(rowId, rowId, cCol, rCol - 1);
     this.setMergeCell(rowId, rowId, rCol, lastCol);
+
+    // ------------------ Report Excel (New) -----------------
   }
 
   /**
@@ -236,26 +228,21 @@ public class ExSheet {
    */
   public void createRowFooterReport(int rowId, Object left, Object center, Object right, int lCol, int cCol, int rCol, int lastCol, int heightInPoints) {
     ExRow row = this.createRow(rowId);
+    ExCell cell;
     // left
-    row.createCell(lCol)
-        .setStyleVerticalBottom()
-        .setStyleHorizontalLeft()
-        .setFontBold()
-        .setValue(left);
+    cell = row.createCell(lCol);
+    cell.setStyle(StyleCell.FOOTERLEFT);
+    cell.setValue(left);
 
     // center
-    row.createCell(cCol)
-        .setStyleVerticalBottom()
-        .setStyleHorizontalCenter()
-        .setFontBold()
-        .setValue(center);
+    cell = row.createCell(cCol);
+    cell.setStyle(StyleCell.FOOTERCENTER);
+    cell.setValue(center);
 
     // right
-    row.createCell(rCol)
-        .setStyleVerticalBottom()
-        .setStyleHorizontalRight()
-        .setFontBold()
-        .setValue(right);
+    cell = row.createCell(rCol);
+    cell.setStyle(StyleCell.FOOTERRIGHT);
+    cell.setValue(right);
 
     // increase row height to accomodate two lines of text
     row.setHeightInPoints(heightInPoints);
@@ -274,12 +261,13 @@ public class ExSheet {
   public void createRowHeaderReport(int rowId, List<String> lists){
     if(lists != null && !lists.isEmpty()) {
       ExRow row = this.createRow(rowId);
+      ExCell cell;
       for (String name : lists) {
-        row.createCell()
-            .setFontBold()
-            .setBorderAll()
-            .setValue(name);
+        cell = row.createCell();
+        cell.setStyle(StyleCell.HEADERCENTER);
+        cell.setValue(name);
       }
     }
   }
+
 }
